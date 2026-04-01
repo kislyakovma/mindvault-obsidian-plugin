@@ -3,7 +3,7 @@
   "name": "MindVault Sync",
   "version": "1.0.0",
   "minAppVersion": "1.0.0",
-  "description": "Sync your Obsidian vault with MindVault AI assistant",
+  "description": "Sync your vault with MindVault AI assistant. Two-way sync, background auto-sync, OAuth connect.",
   "author": "MindVault",
   "authorUrl": "https://mvault.ru",
   "isDesktopOnly": false
