@@ -1,3 +1,5 @@
+import { requestUrl, RequestUrlParam } from "obsidian";
+
 export interface Brief {
   id: string;
   title: string;
@@ -25,19 +27,20 @@ export class MindVaultApi {
     path: string,
     body?: unknown
   ): Promise<T> {
-    const res = await fetch(`${this.apiUrl}${path}`, {
+    const params: RequestUrlParam = {
+      url: `${this.apiUrl}${path}`,
       method,
       headers: {
         Authorization: `Bearer ${this.token}`,
         "Content-Type": "application/json",
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
-    if (!res.ok) {
-      throw new Error(`MindVault API error: ${res.status} ${await res.text()}`);
+    };
+    if (body !== undefined) {
+      params.body = JSON.stringify(body);
     }
-    if (res.status === 204) return undefined as T;
-    return res.json();
+    const response = await requestUrl(params);
+    if (response.status === 204) return undefined as T;
+    return response.json as T;
   }
 
   async getMe(): Promise<UserInfo> {
@@ -82,7 +85,6 @@ export class MindVaultApi {
     );
   }
 
-  // Flatten nested file tree into list of file paths
   flattenFiles(files: VaultFile[], prefix = ""): { path: string; isDir: boolean }[] {
     const result: { path: string; isDir: boolean }[] = [];
     for (const f of files) {

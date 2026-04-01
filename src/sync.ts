@@ -1,4 +1,4 @@
-import { App, TFile, TFolder, normalizePath } from "obsidian";
+import { App, TFile, normalizePath } from "obsidian";
 import { MindVaultApi } from "./api";
 
 export class SyncManager {
@@ -41,7 +41,6 @@ export class SyncManager {
         if (existing instanceof TFile) {
           await this.app.vault.modify(existing, content);
         } else {
-          // Ensure parent folder exists
           const parts = normalized.split("/");
           if (parts.length > 1) {
             const dirPath = parts.slice(0, -1).join("/");

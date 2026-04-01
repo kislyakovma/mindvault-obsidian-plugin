@@ -17,18 +17,18 @@ export default class MindVaultPlugin extends Plugin {
     addIcon("mindvault", MINDVAULT_ICON);
 
     // Ribbon icon
-    this.addRibbonIcon("mindvault", "MindVault Sync", () => {
+    this.addRibbonIcon("mindvault", "MindVault sync", () => {
       if (!this.settings.token) {
-        new Notice("Подключи MindVault в настройках плагина");
+        new Notice("Connect MindVault in plugin settings");
         this.openSettings();
         return;
       }
       if (!this.settings.briefId) {
-        new Notice("Выбери ассистента в настройках плагина");
+        new Notice("Select an assistant in plugin settings");
         this.openSettings();
         return;
       }
-      this.runSync();
+      void this.runSync();
     });
 
     // Status bar
@@ -42,7 +42,7 @@ export default class MindVaultPlugin extends Plugin {
     this.registerObsidianProtocolHandler("mindvault-callback", async (params) => {
       const token = params.token;
       if (!token) {
-        new Notice("MindVault: ошибка авторизации — токен не получен");
+        new Notice("MindVault: authorization error — token not received");
         return;
       }
       this.settings.token = token;
@@ -53,12 +53,12 @@ export default class MindVaultPlugin extends Plugin {
         const api = new MindVaultApi(this.settings.apiUrl, token);
         const me = await api.getMe();
         this.settings.userEmail = me.email;
-        this.settings.userName = me.name || me.email;
+        this.settings.userName = me.name ?? me.email;
         await this.saveSettings();
-        new Notice(`MindVault подключён: ${me.email}`);
+        new Notice(`MindVault connected: ${me.email}`);
         this.updateStatusBar();
       } catch {
-        new Notice("MindVault подключён, но не удалось загрузить профиль");
+        new Notice("MindVault connected, but failed to load profile");
       }
     });
 
@@ -82,12 +82,12 @@ export default class MindVaultPlugin extends Plugin {
 
   updateStatusBar() {
     if (!this.settings.token) {
-      this.statusBarEl.setText("MV: не подключён");
+      this.statusBarEl.setText("MV: not connected");
     } else if (!this.settings.briefId) {
-      this.statusBarEl.setText("MV: выбери ассистента");
+      this.statusBarEl.setText("MV: select an assistant");
     } else {
-      const now = new Date().toLocaleTimeString("ru", { hour: "2-digit", minute: "2-digit" });
-      this.statusBarEl.setText(`MV: синк ${now}`);
+      const now = new Date().toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" });
+      this.statusBarEl.setText(`MV: synced ${now}`);
     }
   }
 
@@ -100,33 +100,33 @@ export default class MindVaultPlugin extends Plugin {
 
     const ms = this.settings.syncIntervalMinutes * 60 * 1000;
     this.syncIntervalId = window.setInterval(() => {
-      this.runSync(true);
+      void this.runSync(true);
     }, ms);
   }
 
   async runSync(silent = false) {
     if (this.isSyncing) {
-      if (!silent) new Notice("Синхронизация уже выполняется...");
+      if (!silent) new Notice("Sync is already running...");
       return;
     }
     if (!this.settings.token || !this.settings.briefId) {
-      new Notice("MindVault: настрой подключение в настройках");
+      new Notice("MindVault: configure connection in settings");
       return;
     }
 
     this.isSyncing = true;
-    this.statusBarEl.setText("MV: синхронизация...");
-    if (!silent) new Notice("MindVault: начало синхронизации...");
+    this.statusBarEl.setText("MV: syncing...");
+    if (!silent) new Notice("MindVault: starting sync...");
 
     try {
       const api = new MindVaultApi(this.settings.apiUrl, this.settings.token);
       const sync = new SyncManager(this.app, api, this.settings.briefId);
       const { pushed, pulled } = await sync.fullSync();
-      const msg = `MindVault: синк завершён — отправлено ${pushed}, получено ${pulled} файлов`;
+      const msg = `MindVault: sync complete — pushed ${pushed}, pulled ${pulled} files`;
       if (!silent) new Notice(msg);
-      console.log("[MindVault]", msg);
-    } catch (e: any) {
-      const msg = `MindVault: ошибка синхронизации — ${e.message}`;
+      console.debug("[MindVault]", msg);
+    } catch (e: unknown) {
+      const msg = `MindVault: sync error — ${e instanceof Error ? e.message : String(e)}`;
       new Notice(msg);
       console.error("[MindVault]", e);
     } finally {
@@ -139,7 +139,7 @@ export default class MindVaultPlugin extends Plugin {
     const state = Math.random().toString(36).slice(2) + Date.now().toString(36);
     const url = `${this.settings.apiUrl.replace("api.", "console.")}/app/obsidian-auth?state=${state}&callback=obsidian%3A%2F%2Fmindvault-callback`;
     window.open(url);
-    new Notice("Откройте браузер и разрешите доступ MindVault");
+    new Notice("Open the browser and authorize MindVault");
   }
 
   openSettings() {
