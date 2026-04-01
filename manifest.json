@@ -1,0 +1,10 @@
+{
+  "id": "mindvault-sync",
+  "name": "MindVault Sync",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Sync your Obsidian vault with MindVault AI assistant",
+  "author": "MindVault",
+  "authorUrl": "https://mvault.ru",
+  "isDesktopOnly": false
+}
