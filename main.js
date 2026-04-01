@@ -115,15 +115,16 @@ var MindVaultSettingTab = class extends import_obsidian.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
+    containerEl.addClass("mindvault-settings");
     containerEl.createEl("h2", { text: "MindVault Sync" });
     if (this.plugin.settings.token) {
-      const info = containerEl.createEl("p", {
-        text: `\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D${this.plugin.settings.userEmail ? ": " + this.plugin.settings.userEmail : ""}`,
-        cls: "setting-item-description"
+      const badge = containerEl.createEl("div", { cls: "mindvault-status-connected" });
+      badge.createEl("span", { text: "\u25CF" });
+      badge.createEl("span", {
+        text: this.plugin.settings.userEmail ? `\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D: ${this.plugin.settings.userEmail}` : "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D"
       });
-      info.style.color = "var(--color-green)";
-      new import_obsidian.Setting(containerEl).setName("\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C").setDesc("\u0412\u044B\u0439\u0442\u0438 \u0438\u0437 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0430 MindVault").addButton(
-        (btn) => btn.setButtonText("\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C").setWarning().onClick(async () => {
+      new import_obsidian.Setting(containerEl).setName("\u0410\u043A\u043A\u0430\u0443\u043D\u0442").setDesc("\u0412\u044B\u0439\u0442\u0438 \u0438\u0437 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0430 MindVault").addButton(
+        (btn) => btn.setButtonText("\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C").setClass("mindvault-btn-disconnect").onClick(async () => {
           this.plugin.settings.token = "";
           this.plugin.settings.userEmail = "";
           this.plugin.settings.userName = "";
@@ -134,22 +135,18 @@ var MindVaultSettingTab = class extends import_obsidian.PluginSettingTab {
         })
       );
     } else {
-      new import_obsidian.Setting(containerEl).setName("\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C MindVault").setDesc("\u041E\u0442\u043A\u0440\u043E\u0435\u0442 \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u0434\u043B\u044F \u0430\u0432\u0442\u043E\u0440\u0438\u0437\u0430\u0446\u0438\u0438").addButton(
-        (btn) => btn.setButtonText("\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C").setCta().onClick(() => {
-          this.plugin.startOAuthFlow();
-        })
+      const badge = containerEl.createEl("div", { cls: "mindvault-status-disconnected" });
+      badge.createEl("span", { text: "\u25CB" });
+      badge.createEl("span", { text: "\u041D\u0435 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D" });
+      new import_obsidian.Setting(containerEl).setName("\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C MindVault").setDesc("\u041E\u0442\u043A\u0440\u043E\u0435\u0442 \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u0434\u043B\u044F \u0430\u0432\u0442\u043E\u0440\u0438\u0437\u0430\u0446\u0438\u0438 \u2014 \u0437\u0430\u0439\u043C\u0451\u0442 10 \u0441\u0435\u043A\u0443\u043D\u0434").addButton(
+        (btn) => btn.setButtonText("\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u2192").setClass("mindvault-btn-connect").onClick(() => this.plugin.startOAuthFlow())
       );
     }
-    new import_obsidian.Setting(containerEl).setName("API URL").setDesc("URL MindVault API (\u043D\u0435 \u043C\u0435\u043D\u044F\u0439 \u0431\u0435\u0437 \u043D\u0443\u0436\u0434\u044B)").addText(
-      (text) => text.setPlaceholder("https://api.mvault.ru").setValue(this.plugin.settings.apiUrl).onChange(async (value) => {
-        this.plugin.settings.apiUrl = value.trim() || "https://api.mvault.ru";
-        await this.plugin.saveSettings();
-      })
-    );
     if (this.plugin.settings.token) {
-      const briefSetting = new import_obsidian.Setting(containerEl).setName("\u0410\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442").setDesc("\u0412\u044B\u0431\u0435\u0440\u0438, \u0441 \u043A\u0430\u043A\u0438\u043C \u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442\u043E\u043C \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C vault");
-      const select = briefSetting.controlEl.createEl("select");
-      select.style.width = "100%";
+      const briefSetting = new import_obsidian.Setting(containerEl).setName("\u0410\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442").setDesc("\u0421 \u043A\u0430\u043A\u0438\u043C \u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442\u043E\u043C \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C vault");
+      const select = briefSetting.controlEl.createEl("select", {
+        cls: "mindvault-brief-select"
+      });
       const loadOption = select.createEl("option", { text: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430...", value: "" });
       const api = new MindVaultApi(this.plugin.settings.apiUrl, this.plugin.settings.token);
       api.getBriefs().then((briefs) => {
@@ -174,18 +171,22 @@ var MindVaultSettingTab = class extends import_obsidian.PluginSettingTab {
         loadOption.text = "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438";
       });
     }
-    new import_obsidian.Setting(containerEl).setName("\u0418\u043D\u0442\u0435\u0440\u0432\u0430\u043B \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u0438 (\u043C\u0438\u043D\u0443\u0442\u044B)").setDesc("\u041A\u0430\u043A \u0447\u0430\u0441\u0442\u043E \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C (1-60)").addSlider(
+    new import_obsidian.Setting(containerEl).setName("\u0410\u0432\u0442\u043E\u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F (\u043C\u0438\u043D\u0443\u0442\u044B)").setDesc("\u041A\u0430\u043A \u0447\u0430\u0441\u0442\u043E \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0432 \u0444\u043E\u043D\u0435").addSlider(
       (slider) => slider.setLimits(1, 60, 1).setValue(this.plugin.settings.syncIntervalMinutes).setDynamicTooltip().onChange(async (value) => {
         this.plugin.settings.syncIntervalMinutes = value;
         await this.plugin.saveSettings();
         this.plugin.resetSyncInterval();
       })
     );
+    new import_obsidian.Setting(containerEl).setName("API URL").setDesc("\u041D\u0435 \u043C\u0435\u043D\u044F\u0439 \u0431\u0435\u0437 \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E\u0441\u0442\u0438").addText(
+      (text) => text.setPlaceholder("https://api.mvault.ru").setValue(this.plugin.settings.apiUrl).onChange(async (value) => {
+        this.plugin.settings.apiUrl = value.trim() || "https://api.mvault.ru";
+        await this.plugin.saveSettings();
+      })
+    );
     if (this.plugin.settings.token && this.plugin.settings.briefId) {
       new import_obsidian.Setting(containerEl).setName("\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0441\u0435\u0439\u0447\u0430\u0441").setDesc("\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C \u043F\u043E\u043B\u043D\u0443\u044E \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044E \u0432\u0440\u0443\u0447\u043D\u0443\u044E").addButton(
-        (btn) => btn.setButtonText("\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C").onClick(() => {
-          this.plugin.runSync();
-        })
+        (btn) => btn.setButtonText("\u27F3 \u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C").setClass("mindvault-btn-sync").onClick(() => this.plugin.runSync())
       );
     }
   }

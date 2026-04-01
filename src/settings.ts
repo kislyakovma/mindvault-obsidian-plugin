@@ -31,24 +31,27 @@ export class MindVaultSettingTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
+    containerEl.addClass("mindvault-settings");
 
     containerEl.createEl("h2", { text: "MindVault Sync" });
 
     // Connection status
     if (this.plugin.settings.token) {
-      const info = containerEl.createEl("p", {
-        text: `Подключён${this.plugin.settings.userEmail ? ": " + this.plugin.settings.userEmail : ""}`,
-        cls: "setting-item-description",
+      const badge = containerEl.createEl("div", { cls: "mindvault-status-connected" });
+      badge.createEl("span", { text: "●" });
+      badge.createEl("span", {
+        text: this.plugin.settings.userEmail
+          ? `Подключён: ${this.plugin.settings.userEmail}`
+          : "Подключён",
       });
-      info.style.color = "var(--color-green)";
 
       new Setting(containerEl)
-        .setName("Отключить")
+        .setName("Аккаунт")
         .setDesc("Выйти из аккаунта MindVault")
         .addButton((btn) =>
           btn
             .setButtonText("Отключить")
-            .setWarning()
+            .setClass("mindvault-btn-disconnect")
             .onClick(async () => {
               this.plugin.settings.token = "";
               this.plugin.settings.userEmail = "";
@@ -60,42 +63,33 @@ export class MindVaultSettingTab extends PluginSettingTab {
             })
         );
     } else {
+      const badge = containerEl.createEl("div", { cls: "mindvault-status-disconnected" });
+      badge.createEl("span", { text: "○" });
+      badge.createEl("span", { text: "Не подключён" });
+
       new Setting(containerEl)
         .setName("Подключить MindVault")
-        .setDesc("Откроет браузер для авторизации")
+        .setDesc("Откроет браузер для авторизации — займёт 10 секунд")
         .addButton((btn) =>
-          btn.setButtonText("Подключить").setCta().onClick(() => {
-            this.plugin.startOAuthFlow();
-          })
+          btn
+            .setButtonText("Подключить →")
+            .setClass("mindvault-btn-connect")
+            .onClick(() => this.plugin.startOAuthFlow())
         );
     }
-
-    // API URL
-    new Setting(containerEl)
-      .setName("API URL")
-      .setDesc("URL MindVault API (не меняй без нужды)")
-      .addText((text) =>
-        text
-          .setPlaceholder("https://api.mvault.ru")
-          .setValue(this.plugin.settings.apiUrl)
-          .onChange(async (value) => {
-            this.plugin.settings.apiUrl = value.trim() || "https://api.mvault.ru";
-            await this.plugin.saveSettings();
-          })
-      );
 
     // Brief selector
     if (this.plugin.settings.token) {
       const briefSetting = new Setting(containerEl)
         .setName("Ассистент")
-        .setDesc("Выбери, с каким ассистентом синхронизировать vault");
+        .setDesc("С каким ассистентом синхронизировать vault");
 
-      const select = briefSetting.controlEl.createEl("select");
-      select.style.width = "100%";
+      const select = briefSetting.controlEl.createEl("select", {
+        cls: "mindvault-brief-select",
+      });
 
       const loadOption = select.createEl("option", { text: "Загрузка...", value: "" });
 
-      // Load briefs async
       const api = new MindVaultApi(this.plugin.settings.apiUrl, this.plugin.settings.token);
       api.getBriefs().then((briefs) => {
         loadOption.remove();
@@ -121,8 +115,8 @@ export class MindVaultSettingTab extends PluginSettingTab {
 
     // Sync interval
     new Setting(containerEl)
-      .setName("Интервал синхронизации (минуты)")
-      .setDesc("Как часто автоматически синхронизировать (1-60)")
+      .setName("Автосинхронизация (минуты)")
+      .setDesc("Как часто синхронизировать в фоне")
       .addSlider((slider) =>
         slider
           .setLimits(1, 60, 1)
@@ -135,15 +129,30 @@ export class MindVaultSettingTab extends PluginSettingTab {
           })
       );
 
+    // API URL
+    new Setting(containerEl)
+      .setName("API URL")
+      .setDesc("Не меняй без необходимости")
+      .addText((text) =>
+        text
+          .setPlaceholder("https://api.mvault.ru")
+          .setValue(this.plugin.settings.apiUrl)
+          .onChange(async (value) => {
+            this.plugin.settings.apiUrl = value.trim() || "https://api.mvault.ru";
+            await this.plugin.saveSettings();
+          })
+      );
+
     // Manual sync
     if (this.plugin.settings.token && this.plugin.settings.briefId) {
       new Setting(containerEl)
         .setName("Синхронизировать сейчас")
         .setDesc("Запустить полную синхронизацию вручную")
         .addButton((btn) =>
-          btn.setButtonText("Синхронизировать").onClick(() => {
-            this.plugin.runSync();
-          })
+          btn
+            .setButtonText("⟳ Синхронизировать")
+            .setClass("mindvault-btn-sync")
+            .onClick(() => this.plugin.runSync())
         );
     }
   }

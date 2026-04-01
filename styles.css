@@ -1,0 +1,123 @@
+/* MindVault Sync — plugin styles */
+
+/* ── Settings tab ─────────────────────────────── */
+.mindvault-settings h2 {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  color: var(--text-normal);
+  border-bottom: 1px solid #2a2a3a;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+
+/* Connection status badge */
+.mindvault-status-connected {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(198, 241, 53, 0.1);
+  border: 1px solid rgba(198, 241, 53, 0.3);
+  color: #c6f135;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.mindvault-status-disconnected {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(107, 107, 128, 0.1);
+  border: 1px solid rgba(107, 107, 128, 0.3);
+  color: #6b6b80;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+/* Connect button */
+.mindvault-btn-connect {
+  background: #c6f135 !important;
+  color: #0a0a0f !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  transition: opacity 0.15s ease !important;
+}
+
+.mindvault-btn-connect:hover {
+  opacity: 0.85 !important;
+  background: #c6f135 !important;
+}
+
+/* Disconnect button */
+.mindvault-btn-disconnect {
+  background: transparent !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(248, 113, 113, 0.4) !important;
+  border-radius: 6px !important;
+}
+
+.mindvault-btn-disconnect:hover {
+  background: rgba(248, 113, 113, 0.08) !important;
+}
+
+/* Sync button */
+.mindvault-btn-sync {
+  background: transparent !important;
+  color: #c6f135 !important;
+  border: 1px solid rgba(198, 241, 53, 0.4) !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+}
+
+.mindvault-btn-sync:hover {
+  background: rgba(198, 241, 53, 0.08) !important;
+}
+
+/* ── Ribbon tooltip ───────────────────────────── */
+.mindvault-ribbon-class {
+  color: #c6f135;
+}
+
+/* ── Notice (toast) ───────────────────────────── */
+.mindvault-notice-success {
+  border-left: 3px solid #c6f135;
+}
+
+.mindvault-notice-error {
+  border-left: 3px solid #f87171;
+}
+
+/* ── Status bar item ──────────────────────────── */
+.status-bar-item[data-plugin-id="mindvault-sync"] {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: #9bbf28;
+  opacity: 0.85;
+}
+
+/* ── Settings select (brief chooser) ─────────── */
+.mindvault-brief-select {
+  background: #111118;
+  border: 1px solid #2a2a3a;
+  color: #e8e8f0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+}
+
+.mindvault-brief-select:focus {
+  border-color: rgba(198, 241, 53, 0.5);
+}
+
+.mindvault-brief-select option {
+  background: #111118;
+  color: #e8e8f0;
+}
