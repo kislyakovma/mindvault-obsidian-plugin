@@ -139,7 +139,7 @@ export default class MindVaultPlugin extends Plugin {
     const state = Math.random().toString(36).slice(2) + Date.now().toString(36);
     const url = `${this.settings.apiUrl.replace("api.", "console.")}/app/obsidian-auth?state=${state}&callback=obsidian%3A%2F%2Fmindvault-callback`;
     window.open(url);
-    new Notice("Open the browser and authorize MindVault");
+    new Notice("Open the browser and authorize mindvault");
   }
 
   openSettings() {

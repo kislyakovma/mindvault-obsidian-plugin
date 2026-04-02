@@ -33,7 +33,7 @@ export class MindVaultSettingTab extends PluginSettingTab {
     containerEl.empty();
     containerEl.addClass("mindvault-settings");
 
-    new Setting(containerEl).setName("Sync settings").setHeading();
+    new Setting(containerEl).setName("Connection").setHeading();
 
     // Connection status
     if (this.plugin.settings.token) {
@@ -47,7 +47,7 @@ export class MindVaultSettingTab extends PluginSettingTab {
 
       new Setting(containerEl)
         .setName("Account")
-        .setDesc("Disconnect from your MindVault account")
+        .setDesc("Disconnect from your mindvault account")
         .addButton((btn) =>
           btn
             .setButtonText("Disconnect")
@@ -68,7 +68,7 @@ export class MindVaultSettingTab extends PluginSettingTab {
       badge.createEl("span", { text: "Not connected" });
 
       new Setting(containerEl)
-        .setName("Connect MindVault")
+        .setName("Connect to mindvault")
         .setDesc("Opens a browser for authorization — takes about 10 seconds")
         .addButton((btn) =>
           btn
@@ -150,7 +150,7 @@ export class MindVaultSettingTab extends PluginSettingTab {
         .setDesc("Run a full synchronization manually")
         .addButton((btn) =>
           btn
-            .setButtonText("⟳ Sync")
+            .setButtonText("⟳ sync")
             .setClass("mindvault-btn-sync")
             .onClick(() => { void this.plugin.runSync() })
         );
