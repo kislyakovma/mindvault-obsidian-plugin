@@ -17,9 +17,9 @@ export default class MindVaultPlugin extends Plugin {
     addIcon("mindvault", MINDVAULT_ICON);
 
     // Ribbon icon
-    this.addRibbonIcon("mindvault", "MindVault sync", () => {
+    this.addRibbonIcon("mindvault", "Sync vault", () => {
       if (!this.settings.token) {
-        new Notice("Connect MindVault in plugin settings");
+        new Notice("Connect in plugin settings");
         this.openSettings();
         return;
       }
@@ -42,7 +42,7 @@ export default class MindVaultPlugin extends Plugin {
     this.registerObsidianProtocolHandler("mindvault-callback", async (params) => {
       const token = params.token;
       if (!token) {
-        new Notice("MindVault: authorization error — token not received");
+        new Notice("Authorization error — token not received");
         return;
       }
       this.settings.token = token;
@@ -58,7 +58,7 @@ export default class MindVaultPlugin extends Plugin {
         new Notice(`MindVault connected: ${me.email}`);
         this.updateStatusBar();
       } catch {
-        new Notice("MindVault connected, but failed to load profile");
+        new Notice("Connected, but failed to load profile");
       }
     });
 
@@ -82,9 +82,9 @@ export default class MindVaultPlugin extends Plugin {
 
   updateStatusBar() {
     if (!this.settings.token) {
-      this.statusBarEl.setText("MV: not connected");
+      this.statusBarEl.setText("Not connected");
     } else if (!this.settings.briefId) {
-      this.statusBarEl.setText("MV: select an assistant");
+      this.statusBarEl.setText("Select an assistant");
     } else {
       const now = new Date().toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" });
       this.statusBarEl.setText(`MV: synced ${now}`);
@@ -110,13 +110,13 @@ export default class MindVaultPlugin extends Plugin {
       return;
     }
     if (!this.settings.token || !this.settings.briefId) {
-      new Notice("MindVault: configure connection in settings");
+      new Notice("Configure connection in settings");
       return;
     }
 
     this.isSyncing = true;
-    this.statusBarEl.setText("MV: syncing...");
-    if (!silent) new Notice("MindVault: starting sync...");
+    this.statusBarEl.setText("Syncing...");
+    if (!silent) new Notice("Starting sync...");
 
     try {
       const api = new MindVaultApi(this.settings.apiUrl, this.settings.token);

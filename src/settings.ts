@@ -33,7 +33,7 @@ export class MindVaultSettingTab extends PluginSettingTab {
     containerEl.empty();
     containerEl.addClass("mindvault-settings");
 
-    new Setting(containerEl).setName("MindVault sync").setHeading();
+    new Setting(containerEl).setName("Sync settings").setHeading();
 
     // Connection status
     if (this.plugin.settings.token) {
